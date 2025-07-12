@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculateur de Moyenne</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculateur de Moyenne</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -14,9 +14,9 @@
     <input type="number" id="baseNote" min="1" value="100" style="width: 80px; margin-right: 10px;" />
 
     <input type="number" id="noteInput" placeholder="Entrez une note" min="0" />
-    <button onclick="ajouterNote()">Ajouter</button>
-    <button onclick="reinitialiserNotes()" class="reset">Réinitialiser</button>
-    <button onclick="toggleTheme()" id="themeBtn">Mode Sombre</button>
+    <button id="addBtn">Ajouter</button>
+    <button id="resetBtn" class="reset">Réinitialiser</button>
+    <button id="themeBtn">Mode Sombre</button>
 
     <ul id="listeNotes"></ul>
 
@@ -26,7 +26,7 @@
     <canvas id="graphique" width="300" height="300"></canvas>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
