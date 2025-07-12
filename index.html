@@ -3,30 +3,24 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Calculateur de Moyenne</title>
-<link rel="stylesheet" href="style.css" />
+<title>Test bouton simple</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Calculateur de Moyenne</h1>
+  <button id="btn1">Bouton 1</button>
+  <button id="btn2">Bouton 2</button>
 
-    <label for="baseNote">Base de la note :</label>
-    <input type="number" id="baseNote" min="1" value="100" style="width: 80px; margin-right: 10px;" />
+  <script>
+    document.getElementById('btn1').addEventListener('click', function() {
+      alert('Bouton 1 cliqué');
+    });
 
-    <input type="number" id="noteInput" placeholder="Entrez une note" min="0" />
-    <button id="addBtn">Ajouter</button>
-    <button id="resetBtn" class="reset">Réinitialiser</button>
-    <button id="themeBtn">Mode Sombre</button>
-
-    <ul id="listeNotes"></ul>
-
-    <h2 id="moyenne">Moyenne : 0%</h2>
-    <p id="mention"></p>
-
-    <canvas id="graphique" width="300" height="300"></canvas>
-  </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
+    document.getElementById('btn2').addEventListener('click', function() {
+      alert('Bouton 2 cliqué');
+    });
+  </script>
 </body>
 </html>
