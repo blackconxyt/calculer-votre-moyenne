@@ -1,151 +1,87 @@
-// Initialisation des notes
-let notes = JSON.parse(localStorage.getItem("notes")) || [];
-
-// Récupération des éléments
-const listeNotes = document.getElementById("listeNotes");
-const moyenneElement = document.getElementById("moyenne");
-const mentionElement = document.getElementById("mention");
-const addBtn = document.getElementById("addBtn");
-const resetBtn = document.getElementById("resetBtn");
-const themeBtn = document.getElementById("themeBtn");
-const baseNoteInput = document.getElementById("baseNote");
-const noteInput = document.getElementById("noteInput");
-
-const ctx = document.getElementById("graphique").getContext("2d");
-
-// Création du graphique Chart.js
-let chart = new Chart(ctx, {
-  type: "doughnut",
-  data: {
-    labels: [],
-    datasets: [{
-      data: [],
-      backgroundColor: ["#3498db", "#9b59b6", "#2ecc71", "#f1c40f", "#e67e22"],
-      hoverOffset: 30,
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { position: "bottom" }
-    }
-  }
-});
-
-// Affiche les notes dans la liste
-function afficherNotes() {
-  listeNotes.innerHTML = "";
-  notes.forEach((note, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `Note ${index + 1} : ${note.toFixed(2)}% <span onclick="supprimerNote(${index})" title="Supprimer cette note">🗑️</span>`;
-    listeNotes.appendChild(li);
-  });
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+  border: none;
 }
 
-// Supprime une note par son index
-function supprimerNote(index) {
-  notes.splice(index, 1);
-  sauvegarder();
-  afficherNotes();
-  calculerMoyenne();
-  updateChart();
+body.dark {
+  background-color: #1e1e1e;
+  color: #eee;
+  border: 5px solid red;
 }
 
-// Ajoute une note après conversion en %
-function ajouterNote() {
-  const noteRaw = parseFloat(noteInput.value);
-  const base = parseFloat(baseNoteInput.value);
-
-  if (isNaN(base) || base <= 0) {
-    alert("La base de la note doit être un nombre strictement positif.");
-    return;
-  }
-
-  if (!isNaN(noteRaw) && noteRaw >= 0 && noteRaw <= base) {
-    const note = (noteRaw / base) * 100;
-    notes.push(note);
-    noteInput.value = "";
-    sauvegarder();
-    afficherNotes();
-    calculerMoyenne();
-    updateChart();
-  } else {
-    alert(`Entrez une note valide entre 0 et ${base}.`);
-  }
+.container {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 30px;
+  text-align: center;
+  border-radius: 10px;
+  transition: border-color 0.3s ease;
 }
 
-// Réinitialise toutes les notes
-function reinitialiserNotes() {
-  if (confirm("Voulez-vous vraiment tout réinitialiser ?")) {
-    notes = [];
-    localStorage.removeItem("notes");
-    afficherNotes();
-    calculerMoyenne();
-    updateChart();
-  }
+input, button {
+  padding: 10px;
+  font-size: 16px;
+  margin: 10px 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-// Calcule et affiche la moyenne et la mention
-function calculerMoyenne() {
-  if (notes.length === 0) {
-    moyenneElement.textContent = "Moyenne : 0%";
-    mentionElement.textContent = "";
-    return;
+button {
+  cursor: pointer;
+  background-color: #3498db;
+  color: white;
+  border: none;
+}
+
+button.reset {
+  background-color: #e74c3c;
+}
+
+body.dark input, 
+body.dark button {
+  background-color: #2c2c2c;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+body.dark button.reset {
+  background-color: #c0392b;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 5px 0;
+}
+
+li span {
+  cursor: pointer;
+  color: red;
+  margin-left: 10px;
+}
+
+#graphique {
+  margin-top: 30px;
+  max-width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 20px;
   }
 
-  const somme = notes.reduce((acc, val) => acc + val, 0);
-  const moyenne = (somme / notes.length).toFixed(2);
-  moyenneElement.textContent = `Moyenne : ${moyenne}%`;
-
-  let mention = "";
-  if (moyenne >= 90) mention = "Excellent 💯";
-  else if (moyenne >= 75) mention = "Très bien ✅";
-  else if (moyenne >= 60) mention = "Bien 👍";
-  else if (moyenne >= 50) mention = "Passable 😐";
-  else mention = "Insuffisant ❌";
-
-  mentionElement.textContent = mention;
-}
-
-// Sauvegarde les notes dans localStorage
-function sauvegarder() {
-  localStorage.setItem("notes", JSON.stringify(notes));
-}
-
-// Met à jour le graphique
-function updateChart() {
-  chart.data.labels = notes.map((_, i) => `Note ${i + 1}`);
-  chart.data.datasets[0].data = notes;
-  chart.update();
-}
-
-// Bascule le thème sombre/clair
-function toggleTheme() {
-  document.body.classList.toggle("dark");
-  if (document.body.classList.contains("dark")) {
-    themeBtn.textContent = "Mode Clair";
-    localStorage.setItem("theme", "dark");
-  } else {
-    themeBtn.textContent = "Mode Sombre";
-    localStorage.setItem("theme", "light");
+  input, button {
+    width: 90%;
+    margin: 5px auto;
   }
 }
-
-// Événements
-addBtn.addEventListener("click", ajouterNote);
-resetBtn.addEventListener("click", reinitialiserNotes);
-themeBtn.addEventListener("click", toggleTheme);
-
-// Au chargement de la page
-document.addEventListener("DOMContentLoaded", () => {
-  afficherNotes();
-  calculerMoyenne();
-  updateChart();
-
-  // Charger le thème sauvegardé
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark");
-    themeBtn.textContent = "Mode Clair";
-  }
-});
