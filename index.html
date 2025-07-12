@@ -1,73 +1,72 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Calculateur de Moyenne avec % ou base</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f9f9f9;
-    color: #333;
-    transition: background-color 0.3s, color 0.3s, border 0.3s;
-    border: none;
-  }
-  body.dark {
-    background-color: #1e1e1e;
-    color: #eee;
-    border: 5px solid red;
-  }
-  .container {
-    max-width: 480px;
-    margin: auto;
-    text-align: center;
-  }
-  input, button {
-    padding: 8px 12px;
-    margin: 5px;
-    font-size: 16px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  button {
-    cursor: pointer;
-    background-color: #3498db;
-    color: white;
-    border: none;
-  }
-  button.reset {
-    background-color: #e74c3c;
-  }
-  body.dark input, body.dark button {
-    background-color: #333;
-    color: #eee;
-    border: 1px solid #555;
-  }
-  body.dark button.reset {
-    background-color: #c0392b;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  li {
-    margin: 6px 0;
-    font-size: 18px;
-  }
-  li span {
-    color: red;
-    cursor: pointer;
-    margin-left: 12px;
-    font-weight: bold;
-  }
-  label.inline {
-    display: inline-block;
-    margin-left: 8px;
-    font-weight: normal;
-    cursor: pointer;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculateur de Moyenne</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark {
+      background-color: #1e1e1e;
+      color: #eee;
+      border: 5px solid red;
+    }
+    .container {
+      max-width: 480px;
+      margin: auto;
+      text-align: center;
+    }
+    input, button {
+      padding: 8px 12px;
+      margin: 5px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      border: none;
+    }
+    button.reset {
+      background-color: #e74c3c;
+    }
+    body.dark input, body.dark button {
+      background-color: #333;
+      color: #eee;
+      border: 1px solid #555;
+    }
+    body.dark button.reset {
+      background-color: #c0392b;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 6px 0;
+      font-size: 18px;
+    }
+    li span {
+      color: red;
+      cursor: pointer;
+      margin-left: 12px;
+      font-weight: bold;
+    }
+    label.inline {
+      display: inline-block;
+      margin-left: 8px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -94,126 +93,130 @@
     <p id="mention"></p>
   </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  var notes = [];
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let notes = [];
+      const baseNoteInput = document.getElementById("baseNote");
+      const noteInput = document.getElementById("noteInput");
+      const addBtn = document.getElementById("addBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const themeBtn = document.getElementById("themeBtn");
+      const listeNotes = document.getElementById("listeNotes");
+      const moyenneElement = document.getElementById("moyenne");
+      const mentionElement = document.getElementById("mention");
+      const pourcentCheck = document.getElementById("pourcentCheck");
 
-  var baseNoteInput = document.getElementById("baseNote");
-  var noteInput = document.getElementById("noteInput");
-  var addBtn = document.getElementById("addBtn");
-  var resetBtn = document.getElementById("resetBtn");
-  var themeBtn = document.getElementById("themeBtn");
-  var listeNotes = document.getElementById("listeNotes");
-  var moyenneElement = document.getElementById("moyenne");
-  var mentionElement = document.getElementById("mention");
-  var pourcentCheck = document.getElementById("pourcentCheck");
+      // Charger les notes sauvegardées
+      if (localStorage.getItem("notes")) {
+        notes = JSON.parse(localStorage.getItem("notes"));
+      }
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        themeBtn.textContent = "Mode Clair";
+      }
+      if (localStorage.getItem("pourcentCheck") === "true") {
+        pourcentCheck.checked = true;
+        baseNoteInput.disabled = true;
+        noteInput.placeholder = "Entrez un pourcentage (0-100)";
+      }
 
-  // Active/désactive la base selon la checkbox
-  pourcentCheck.addEventListener("change", function() {
-    baseNoteInput.disabled = this.checked;
-    noteInput.placeholder = this.checked ? "Entrez un pourcentage (0-100)" : "Entrez une note";
-    noteInput.value = "";
-  });
+      function sauvegarder() {
+        localStorage.setItem("notes", JSON.stringify(notes));
+        localStorage.setItem("pourcentCheck", pourcentCheck.checked);
+      }
 
-  function afficherNotes() {
-    listeNotes.innerHTML = "";
-    for (var i = 0; i < notes.length; i++) {
-      var li = document.createElement("li");
-      li.textContent = "Note " + (i + 1) + ": " + notes[i].toFixed(2) + "%";
-      var spanSuppr = document.createElement("span");
-      spanSuppr.textContent = "✖";
-      (function(index) {
-        spanSuppr.addEventListener("click", function() {
-          supprimerNote(index);
+      pourcentCheck.addEventListener("change", function() {
+        baseNoteInput.disabled = this.checked;
+        noteInput.placeholder = this.checked ? "Entrez un pourcentage (0-100)" : "Entrez une note";
+        sauvegarder();
+      });
+
+      function afficherNotes() {
+        listeNotes.innerHTML = "";
+        notes.forEach((note, index) => {
+          const li = document.createElement("li");
+          li.textContent = `Note ${index + 1} : ${note.toFixed(2)}%`;
+          const span = document.createElement("span");
+          span.textContent = "✖";
+          span.addEventListener("click", () => supprimerNote(index));
+          li.appendChild(span);
+          listeNotes.appendChild(li);
         });
-      })(i);
-      li.appendChild(spanSuppr);
-      listeNotes.appendChild(li);
-    }
-  }
-
-  function calculerMoyenne() {
-    if (notes.length === 0) {
-      moyenneElement.textContent = "Moyenne : 0%";
-      mentionElement.textContent = "";
-      return;
-    }
-    var somme = 0;
-    for (var i = 0; i < notes.length; i++) {
-      somme += notes[i];
-    }
-    var moyenne = somme / notes.length;
-    moyenneElement.textContent = "Moyenne : " + moyenne.toFixed(2) + "%";
-
-    var mention = "";
-    if (moyenne >= 90) mention = "Excellent 💯";
-    else if (moyenne >= 75) mention = "Très bien ✅";
-    else if (moyenne >= 60) mention = "Bien 👍";
-    else if (moyenne >= 50) mention = "Passable 😐";
-    else mention = "Insuffisant ❌";
-
-    mentionElement.textContent = mention;
-  }
-
-  function ajouterNote() {
-    var base = parseFloat(baseNoteInput.value);
-    var noteRaw = parseFloat(noteInput.value);
-    if (pourcentCheck.checked) {
-      // Entrée directe en %
-      if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > 100) {
-        alert("Note en % invalide (doit être entre 0 et 100)");
-        return;
       }
-      notes.push(noteRaw);
-    } else {
-      // Entrée sur base personnalisée
-      if (isNaN(base) || base <= 0) {
-        alert("La base doit être un nombre strictement positif");
-        return;
-      }
-      if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > base) {
-        alert("Note invalide, doit être entre 0 et " + base);
-        return;
-      }
-      var note = (noteRaw / base) * 100;
-      notes.push(note);
-    }
-    noteInput.value = "";
-    afficherNotes();
-    calculerMoyenne();
-  }
 
-  function supprimerNote(index) {
-    notes.splice(index, 1);
-    afficherNotes();
-    calculerMoyenne();
-  }
+      function calculerMoyenne() {
+        if (notes.length === 0) {
+          moyenneElement.textContent = "Moyenne : 0%";
+          mentionElement.textContent = "";
+          return;
+        }
+        const moyenne = notes.reduce((a, b) => a + b, 0) / notes.length;
+        moyenneElement.textContent = "Moyenne : " + moyenne.toFixed(2) + "%";
+        let mention = "";
+        if (moyenne >= 90) mention = "Excellent 💯";
+        else if (moyenne >= 75) mention = "Très bien ✅";
+        else if (moyenne >= 60) mention = "Bien 👍";
+        else if (moyenne >= 50) mention = "Passable 😐";
+        else mention = "Insuffisant ❌";
+        mentionElement.textContent = mention;
+      }
 
-  function resetNotes() {
-    if (confirm("Voulez-vous vraiment tout réinitialiser ?")) {
-      notes = [];
+      function ajouterNote() {
+        const base = parseFloat(baseNoteInput.value);
+        const noteRaw = parseFloat(noteInput.value);
+        if (pourcentCheck.checked) {
+          if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > 100) {
+            alert("Note en % invalide (0 à 100)");
+            return;
+          }
+          notes.push(noteRaw);
+        } else {
+          if (isNaN(base) || base <= 0) {
+            alert("Base invalide");
+            return;
+          }
+          if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > base) {
+            alert(`Note invalide (0 à ${base})`);
+            return;
+          }
+          notes.push((noteRaw / base) * 100);
+        }
+        noteInput.value = "";
+        sauvegarder();
+        afficherNotes();
+        calculerMoyenne();
+      }
+
+      function supprimerNote(index) {
+        notes.splice(index, 1);
+        sauvegarder();
+        afficherNotes();
+        calculerMoyenne();
+      }
+
+      function resetNotes() {
+        if (confirm("Tout réinitialiser ?")) {
+          notes = [];
+          localStorage.removeItem("notes");
+          afficherNotes();
+          calculerMoyenne();
+        }
+      }
+
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        const mode = document.body.classList.contains("dark");
+        localStorage.setItem("theme", mode ? "dark" : "light");
+        themeBtn.textContent = mode ? "Mode Clair" : "Mode Sombre";
+      }
+
+      addBtn.addEventListener("click", ajouterNote);
+      resetBtn.addEventListener("click", resetNotes);
+      themeBtn.addEventListener("click", toggleTheme);
+
       afficherNotes();
       calculerMoyenne();
-    }
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle("dark");
-    if (document.body.classList.contains("dark")) {
-      themeBtn.textContent = "Mode Clair";
-    } else {
-      themeBtn.textContent = "Mode Sombre";
-    }
-  }
-
-  addBtn.addEventListener("click", ajouterNote);
-  resetBtn.addEventListener("click", resetNotes);
-  themeBtn.addEventListener("click", toggleTheme);
-
-  // Initial display
-  afficherNotes();
-  calculerMoyenne();
-});
-</script>
+    });
+  </script>
 </body>
 </html>
