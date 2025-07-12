@@ -1,1 +1,19 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculateur de Moyenne</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Calculateur de Moyenne</h1>
+    <input type="number" id="noteInput" placeholder="Entrez une note" min="0" max="100">
+    <button onclick="ajouterNote()">Ajouter</button>
+    <ul id="listeNotes"></ul>
+    <h2 id="moyenne">Moyenne : 0</h2>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
