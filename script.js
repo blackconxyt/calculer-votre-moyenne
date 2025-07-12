@@ -1,104 +1,43 @@
-// Initialisation des notes
-var notes = JSON.parse(localStorage.getItem("notes")) || [];
+var notes = [];
 
-// Récupération des éléments
-var listeNotes = document.getElementById("listeNotes");
-var moyenneElement = document.getElementById("moyenne");
-var mentionElement = document.getElementById("mention");
+var baseNoteInput = document.getElementById("baseNote");
+var noteInput = document.getElementById("noteInput");
 var addBtn = document.getElementById("addBtn");
 var resetBtn = document.getElementById("resetBtn");
 var themeBtn = document.getElementById("themeBtn");
-var baseNoteInput = document.getElementById("baseNote");
-var noteInput = document.getElementById("noteInput");
+var listeNotes = document.getElementById("listeNotes");
+var moyenneElement = document.getElementById("moyenne");
+var mentionElement = document.getElementById("mention");
 
-var ctx = document.getElementById("graphique").getContext("2d");
-
-// Création du graphique Chart.js
-var chart = new Chart(ctx, {
-  type: "doughnut",
-  data: {
-    labels: [],
-    datasets: [{
-      data: [],
-      backgroundColor: ["#3498db", "#9b59b6", "#2ecc71", "#f1c40f", "#e67e22"],
-      hoverOffset: 30,
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { position: "bottom" }
-    }
-  }
-});
-
-// Affiche les notes dans la liste
 function afficherNotes() {
   listeNotes.innerHTML = "";
   for (var i = 0; i < notes.length; i++) {
     var li = document.createElement("li");
-    li.innerHTML = "Note " + (i + 1) + " : " + notes[i].toFixed(2) + "% <span onclick='supprimerNote(" + i + ")' title='Supprimer cette note'>🗑️</span>";
+    li.textContent = "Note " + (i + 1) + ": " + notes[i].toFixed(2) + "%";
+    var spanSuppr = document.createElement("span");
+    spanSuppr.textContent = "✖";
+    (function(index) {
+      spanSuppr.addEventListener("click", function() {
+        supprimerNote(index);
+      });
+    })(i);
+    li.appendChild(spanSuppr);
     listeNotes.appendChild(li);
   }
 }
 
-// Supprime une note par son index
-function supprimerNote(index) {
-  notes.splice(index, 1);
-  sauvegarder();
-  afficherNotes();
-  calculerMoyenne();
-  updateChart();
-}
-
-// Ajoute une note après conversion en %
-function ajouterNote() {
-  var noteRaw = parseFloat(noteInput.value);
-  var base = parseFloat(baseNoteInput.value);
-
-  if (isNaN(base) || base <= 0) {
-    alert("La base de la note doit être un nombre strictement positif.");
-    return;
-  }
-
-  if (!isNaN(noteRaw) && noteRaw >= 0 && noteRaw <= base) {
-    var note = (noteRaw / base) * 100;
-    notes.push(note);
-    noteInput.value = "";
-    sauvegarder();
-    afficherNotes();
-    calculerMoyenne();
-    updateChart();
-  } else {
-    alert("Entrez une note valide entre 0 et " + base + ".");
-  }
-}
-
-// Réinitialise toutes les notes
-function reinitialiserNotes() {
-  if (confirm("Voulez-vous vraiment tout réinitialiser ?")) {
-    notes = [];
-    localStorage.removeItem("notes");
-    afficherNotes();
-    calculerMoyenne();
-    updateChart();
-  }
-}
-
-// Calcule et affiche la moyenne et la mention
 function calculerMoyenne() {
   if (notes.length === 0) {
     moyenneElement.textContent = "Moyenne : 0%";
     mentionElement.textContent = "";
     return;
   }
-
   var somme = 0;
   for (var i = 0; i < notes.length; i++) {
     somme += notes[i];
   }
-  var moyenne = (somme / notes.length).toFixed(2);
-  moyenneElement.textContent = "Moyenne : " + moyenne + "%";
+  var moyenne = somme / notes.length;
+  moyenneElement.textContent = "Moyenne : " + moyenne.toFixed(2) + "%";
 
   var mention = "";
   if (moyenne >= 90) mention = "Excellent 💯";
@@ -110,50 +49,47 @@ function calculerMoyenne() {
   mentionElement.textContent = mention;
 }
 
-// Sauvegarde les notes dans localStorage
-function sauvegarder() {
-  localStorage.setItem("notes", JSON.stringify(notes));
-}
-
-// Met à jour le graphique
-function updateChart() {
-  var labels = [];
-  for (var i = 0; i < notes.length; i++) {
-    labels.push("Note " + (i + 1));
+function ajouterNote() {
+  var base = parseFloat(baseNoteInput.value);
+  var noteRaw = parseFloat(noteInput.value);
+  if (isNaN(base) || base <= 0) {
+    alert("La base doit être un nombre strictement positif");
+    return;
   }
-  chart.data.labels = labels;
-  chart.data.datasets[0].data = notes;
-  chart.update();
-}
-
-// Bascule le thème sombre/clair
-function toggleTheme() {
-  if (document.body.classList.contains("dark")) {
-    document.body.classList.remove("dark");
-    themeBtn.textContent = "Mode Sombre";
-    localStorage.setItem("theme", "light");
-  } else {
-    document.body.classList.add("dark");
-    themeBtn.textContent = "Mode Clair";
-    localStorage.setItem("theme", "dark");
+  if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > base) {
+    alert("Note invalide, doit être entre 0 et " + base);
+    return;
   }
-}
-
-// Événements
-addBtn.addEventListener("click", ajouterNote);
-resetBtn.addEventListener("click", reinitialiserNotes);
-themeBtn.addEventListener("click", toggleTheme);
-
-// Au chargement de la page
-document.addEventListener("DOMContentLoaded", function() {
+  var note = (noteRaw / base) * 100;
+  notes.push(note);
+  noteInput.value = "";
   afficherNotes();
   calculerMoyenne();
-  updateChart();
+}
 
-  // Charger le thème sauvegardé
-  var savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark");
-    themeBtn.textContent = "Mode Clair";
+function supprimerNote(index) {
+  notes.splice(index, 1);
+  afficherNotes();
+  calculerMoyenne();
+}
+
+function resetNotes() {
+  if (confirm("Voulez-vous vraiment tout réinitialiser ?")) {
+    notes = [];
+    afficherNotes();
+    calculerMoyenne();
   }
-});
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  if (document.body.classList.contains("dark")) {
+    themeBtn.textContent = "Mode Clair";
+  } else {
+    themeBtn.textContent = "Mode Sombre";
+  }
+}
+
+addBtn.addEventListener("click", ajouterNote);
+resetBtn.addEventListener("click", resetNotes);
+themeBtn.addEventListener("click", toggleTheme);
