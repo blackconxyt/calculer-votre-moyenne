@@ -1,26 +1,30 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  text-align: center;
-  padding: 20px;
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculateur de Moyenne</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Calculateur de Moyenne</h1>
 
-.container {
-  max-width: 400px;
-  margin: auto;
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #aaa;
-}
+    <input type="number" id="noteInput" placeholder="Entrez une note (0–100)" min="0" max="100" />
+    <button onclick="ajouterNote()">Ajouter</button>
+    <button onclick="reinitialiserNotes()" class="reset">Réinitialiser</button>
+    <button onclick="toggleTheme()">Mode Sombre/Clair</button>
 
-input, button {
-  padding: 10px;
-  font-size: 16px;
-  margin: 10px;
-}
+    <ul id="listeNotes"></ul>
 
-ul {
-  list-style: none;
-  padding: 0;
-}
+    <h2 id="moyenne">Moyenne : 0</h2>
+    <p id="mention"></p>
+
+    <canvas id="graphique" width="300" height="300"></canvas>
+  </div>
+
+  <script src="chart.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
