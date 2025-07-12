@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Calculateur de Moyenne</title>
+<title>Calculateur de Moyenne avec % ou base</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@
     border: 5px solid red;
   }
   .container {
-    max-width: 450px;
+    max-width: 480px;
     margin: auto;
     text-align: center;
   }
@@ -61,14 +61,27 @@
     margin-left: 12px;
     font-weight: bold;
   }
+  label.inline {
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: normal;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
   <div class="container">
     <h1>Calculateur de Moyenne</h1>
 
-    <label for="baseNote">Base de la note :</label>
-    <input type="number" id="baseNote" value="20" min="1" />
+    <div>
+      <input type="checkbox" id="pourcentCheck" />
+      <label for="pourcentCheck" class="inline">Entrer directement en %</label>
+    </div>
+
+    <div>
+      <label for="baseNote">Base de la note :</label>
+      <input type="number" id="baseNote" value="20" min="1" />
+    </div>
 
     <input type="number" id="noteInput" placeholder="Entrez une note" min="0" />
     <button id="addBtn">Ajouter</button>
@@ -93,6 +106,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var listeNotes = document.getElementById("listeNotes");
   var moyenneElement = document.getElementById("moyenne");
   var mentionElement = document.getElementById("mention");
+  var pourcentCheck = document.getElementById("pourcentCheck");
+
+  // Active/désactive la base selon la checkbox
+  pourcentCheck.addEventListener("change", function() {
+    baseNoteInput.disabled = this.checked;
+    noteInput.placeholder = this.checked ? "Entrez un pourcentage (0-100)" : "Entrez une note";
+    noteInput.value = "";
+  });
 
   function afficherNotes() {
     listeNotes.innerHTML = "";
@@ -137,16 +158,26 @@ document.addEventListener("DOMContentLoaded", function() {
   function ajouterNote() {
     var base = parseFloat(baseNoteInput.value);
     var noteRaw = parseFloat(noteInput.value);
-    if (isNaN(base) || base <= 0) {
-      alert("La base doit être un nombre strictement positif");
-      return;
+    if (pourcentCheck.checked) {
+      // Entrée directe en %
+      if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > 100) {
+        alert("Note en % invalide (doit être entre 0 et 100)");
+        return;
+      }
+      notes.push(noteRaw);
+    } else {
+      // Entrée sur base personnalisée
+      if (isNaN(base) || base <= 0) {
+        alert("La base doit être un nombre strictement positif");
+        return;
+      }
+      if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > base) {
+        alert("Note invalide, doit être entre 0 et " + base);
+        return;
+      }
+      var note = (noteRaw / base) * 100;
+      notes.push(note);
     }
-    if (isNaN(noteRaw) || noteRaw < 0 || noteRaw > base) {
-      alert("Note invalide, doit être entre 0 et " + base);
-      return;
-    }
-    var note = (noteRaw / base) * 100;
-    notes.push(note);
     noteInput.value = "";
     afficherNotes();
     calculerMoyenne();
