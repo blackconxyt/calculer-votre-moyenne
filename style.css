@@ -1,10 +1,9 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #f9f9f9;
   color: #333;
-  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+  transition: background-color 0.3s, color 0.3s, border 0.3s;
   border: none;
 }
 
@@ -15,21 +14,17 @@ body.dark {
 }
 
 .container {
-  max-width: 500px;
-  margin: 30px auto;
-  padding: 30px;
+  max-width: 450px;
+  margin: auto;
   text-align: center;
-  border-radius: 10px;
-  transition: border-color 0.3s ease;
 }
 
 input, button {
-  padding: 10px;
+  padding: 8px 12px;
+  margin: 5px;
   font-size: 16px;
-  margin: 10px 5px;
-  border-radius: 5px;
+  border-radius: 4px;
   border: 1px solid #ccc;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 button {
@@ -43,9 +38,8 @@ button.reset {
   background-color: #e74c3c;
 }
 
-body.dark input, 
-body.dark button {
-  background-color: #2c2c2c;
+body.dark input, body.dark button {
+  background-color: #333;
   color: #eee;
   border: 1px solid #555;
 }
@@ -60,28 +54,13 @@ ul {
 }
 
 li {
-  margin: 5px 0;
+  margin: 6px 0;
+  font-size: 18px;
 }
 
 li span {
-  cursor: pointer;
   color: red;
-  margin-left: 10px;
-}
-
-#graphique {
-  margin-top: 30px;
-  max-width: 100%;
-  height: auto;
-}
-
-@media screen and (max-width: 600px) {
-  .container {
-    padding: 20px;
-  }
-
-  input, button {
-    width: 90%;
-    margin: 5px auto;
-  }
+  cursor: pointer;
+  margin-left: 12px;
+  font-weight: bold;
 }
